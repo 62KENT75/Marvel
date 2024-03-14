@@ -1,4 +1,5 @@
 import {Component} from 'react';
+import PropTypes from 'prop-types';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import MarvelService from '../../services/MarvelService';
@@ -40,13 +41,18 @@ class CharList extends Component {
             ended = true;
         }
 
-        this.setState(({offset, charList}) => ({
-                charList: [...charList, ...newCharList],
+        this.setState(({offset, charList}) => {
+            const newArr = newCharList.filter((fItem) => !charList.map((item) => item.id).includes(fItem.id))
+            
+            return {
+                charList: [...charList, ...newArr],
                 loading: false,
                 newItemLoading: false,
                 offset: offset + 9,
                 charEnded: ended
-        }))
+            }
+        })
+
     }
 
     onError = () => {
@@ -108,6 +114,10 @@ class CharList extends Component {
             </div>
         )
     }
+}
+
+CharList.propTypes = {
+    onCharSelected: PropTypes.func.isRequired
 }
 
 export default CharList;
