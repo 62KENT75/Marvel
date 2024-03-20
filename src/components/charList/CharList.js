@@ -38,8 +38,8 @@ const CharList = (props) => {
             ended = true;
         }
 
-        // const newArr = newCharList.filter((fItem) => !charList.map((item) => item.id).includes(fItem.id));
-        setCharList(charList => [...charList, ...newCharList]);
+        const newArr = newCharList.filter((fItem) => !charList.map((item) => item.id).includes(fItem.id));
+        setCharList([...charList, ...newArr]);
         setLoading(loading => false);
         setNewItemLoading(newItemLoading => false);
         setOffset(offset => offset + 9);
