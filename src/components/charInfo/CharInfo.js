@@ -1,20 +1,21 @@
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+
+import useMarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import Skeleton from '../skeleton/Skeleton';
-import MarvelService from '../../services/MarvelService';
+
 import './charInfo.scss';
 
 const CharInfo = (props) => {
-    const [char, setChar] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(false);
 
-    const marvelService = new MarvelService();
+    const [char, setChar] = useState(null);
+
+    const {loading, error, getCharacter, clearError} = useMarvelService();
 
     useEffect(() => {
-        updateChar();
+        updateChar()
     }, [props.charId])
 
     const updateChar = () => {
@@ -23,25 +24,13 @@ const CharInfo = (props) => {
             return;
         }
 
-        onCharLoading();
-
-        marvelService.getCharacter(charId)
-            .then(this.onCharLoaded)
-            .catch(this.onError);
+        clearError();
+        getCharacter(charId)
+            .then(onCharLoaded)
     }
 
     const onCharLoaded = (char) => {
         setChar(char);
-        setLoading(false);
-    }
-
-    const onCharLoading = () => {
-        setLoading(true);
-    }
-
-    const onError = () => {
-        setLoading(false);
-        setError(true);
     }
 
     const skeleton = char || loading || error ? null : <Skeleton/>;
@@ -61,7 +50,7 @@ const CharInfo = (props) => {
 
 const View = ({char}) => {
     const {name, description, thumbnail, homepage, wiki, comics} = char;
-    
+
     let imgStyle = {'objectFit' : 'cover'};
     if (thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
         imgStyle = {'objectFit' : 'contain'};
@@ -88,19 +77,18 @@ const View = ({char}) => {
             </div>
             <div className="char__comics">Comics:</div>
             <ul className="char__comics-list">
-                {comics.length > 0 ? null : "The Hero hasn't comics"}
+                {comics.length > 0 ? null : 'There is no comics with this character'}
                 {
                     comics.map((item, i) => {
                         // eslint-disable-next-line
                         if (i > 9) return;
-
                         return (
                             <li key={i} className="char__comics-item">
                                 {item.name}
                             </li>
                         )
                     })
-                }
+                }                
             </ul>
         </>
     )
